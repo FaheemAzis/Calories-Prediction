@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calories prediction</title>
+
+    <!--vendor css ================================================== -->
+    <link rel="stylesheet" type="text/css" href="/static/css/vendor.css">
+
+    <!-- Link Swiper's CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+
+    <!--Bootstrap ================================================== -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+
+    <!-- Style Sheet ================================================== -->
+    <link rel="stylesheet" type="text/css" href="/static/styles.css">
+
+    <!-- Google Fonts ================================================== -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,300;0,700;1,300&family=Roboto:wght@300;400;700&display=swap"
+        rel="stylesheet">
+
+
+    <!-- script ================================================== -->
+    <script src="/static/js/modernizr.js"></script>
+</head>
+
+<body data-bs-spy="scroll" data-bs-target="#header-nav" tabindex="0">
+
+    <nav class="navbar navbar-expand-lg bg-white navbar-light container-fluid py-3 position-fixed ">
+        <div class="container">
+            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar"
+                aria-controls="offcanvasNavbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar"
+                aria-labelledby="offcanvasNavbarLabel">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Menu</h5>
+                    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"
+                        aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <ul class="navbar-nav align-items-center justify-content-end flex-grow-1 pe-3">
+                        <li class="nav-item">
+                            <a class="nav-link text-uppercase  active px-3" aria-current="page"
+                                href="/">Calories burn</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-uppercase  px-3" href="/class">Healthy Diet</a>
+                        </li>
+                    </li>
+                    <li class="nav-item ms-2"><a href="/visual" class="dropdown-item text-uppercase btn btn-primary text-white py-2 px-3 "> Visualization </a></li>
+                </li>
+                <li class="nav-item ms-2"><a href="/data" class="dropdown-item text-uppercase btn btn-primary text-white py-2 px-3 "> Datas </a></li>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <section id="hero" class="position-relative overflow-hidden py-4" style="background: url(/static/images/food.jpg); background-size: cover;">
+    <div class="container py-5 mt-5">
+        <div class="row align-items-center py-5 mt-5">
+            <div class="col-md-6 mb-5 mb-md-0">
+                <h6 class="text-white"></h6>
+                <h2 class="text-white fw-bold display-2">As per USDA Center daily diet intake guideline: </h2>
+                <h3 class="text-white fw-bold display-4">30% grains, 40% vegetables,</h3>
+                <h3 class="text-white fw-bold display-4">10% fruits, and 20% protein</h3>
+                <p class="text-white"></p>
+            </div>
+            <div class="col-md-5 offset-md-1">
+                <form class="hero-form p-5" action="{{ url_for('predict2') }}" method="POST">
+
+                    <h3>Healthy diet Analysis</h3>
+
+            <!-- Grains Slider -->
+            <div class="mb-3">
+                <label for="grains" class="form-label mb-0">Enter Grains Percentage</label>
+                <input type="range" name="grains" class="form-range nutrient-slider" id="grains" min="0" max="100"
+                    step="0.01" oninput="updateSliders()">
+                <span id="grainsLabel">0%</span>
+            </div>
+
+            <!-- Vegetables Slider -->
+            <div class="mb-3">
+                <label for="vegetables" class="form-label mb-0">Enter Vegetables Percentage</label>
+                <input type="range" name="vegetables" class="form-range nutrient-slider" id="vegetables" min="0"
+                    max="100" step="0.01" oninput="updateSliders()">
+                <span id="vegetablesLabel">0%</span>
+            </div>
+
+            <!-- Fruits Slider -->
+            <div class="mb-3">
+                <label for="fruits" class="form-label mb-0">Enter Fruits Percentage</label>
+                <input type="range" name="fruits" class="form-range nutrient-slider" id="fruits" min="0" max="100"
+                    step="0.01" oninput="updateSliders()">
+                <span id="fruitsLabel">0%</span>
+            </div>
+
+            <!-- Protein Slider -->
+            <div class="mb-3">
+                <label for="protein" class="form-label mb-0">Enter Protein Percentage</label>
+                <input type="range" name="protein" class="form-range nutrient-slider" id="protein" min="0" max="100"
+                    step="0.01" oninput="updateSliders()">
+                <span id="proteinLabel">0%</span>
+            </div>
+                    
+                    <div class="d-grid">
+                        <input name="" type="submit" class="btn btn-primary btn-lg" value="Predict" onclick="updateSliders()">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    function updateSliders() {
+        var grainsValue = document.getElementById('grains').value;
+        var vegetablesValue = document.getElementById('vegetables').value;
+        var fruitsValue = document.getElementById('fruits').value;
+        var proteinValue = document.getElementById('protein').value;
+
+        document.getElementById('grainsLabel').textContent = grainsValue + '%';
+        document.getElementById('vegetablesLabel').textContent = vegetablesValue + '%';
+        document.getElementById('fruitsLabel').textContent = fruitsValue + '%';
+        document.getElementById('proteinLabel').textContent = proteinValue + '%';
+    }
+</script>
+
+
+
+    <!-- script ================================================== -->
+    <script src="/static/js/jquery-1.11.0.min.js"></script>
+    <script src="/static/js/plugins.js"></script>
+    <script src="/static/js/script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.7/dist/iconify-icon.min.js"></script>
+
+</body>
+
+
+</html>
